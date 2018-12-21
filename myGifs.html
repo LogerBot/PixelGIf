@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!--===============================================================================================-->
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.0/firebaseui.js"></script>
+    <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+    <script src='https://static.tumblr.com/maopbtg/oimmiw86r/jquery.autosize-min.js'></script>
+    <script src='http://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.min.js'></script>
+    <script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.0/firebaseui.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/upload.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/8bit-wonder" type="text/css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="images/icons/favicon.png"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>    
+    <link rel="icon" type="image/png" href="images/icons/favicon.png"/>    
+<!--===============================================================================================-->
+<title>My Uploaded Gifs</title>
+</head>
+
+<body>
+<h1 id="log">My Gif List</h1>
+<p id="copy"></p>
+<div id="main"> </div>
+</body>
+</html> 
+
+<!--Scripts-->
+<script>
+    //Firebase config
+var config = {
+    apiKey: "AIzaSyBfNw37iyuwI3-W5Wn4H9P34n3f0rl5dzY",
+    authDomain: "login-476c9.firebaseapp.com",
+    databaseURL: "https://login-476c9.firebaseio.com",
+    projectId: "login-476c9",
+    storageBucket: "login-476c9.appspot.com",
+    messagingSenderId: "72881085156"
+             };
+    firebase.initializeApp(config);
+    var storage = firebase.storage();
+    var database = firebase.database();
+</script>
+
+<!--Scripts para checar-->
+<script>
+    //Checar os gifs uploads pelo user
+$(document).ready(function(){ 
+    firebase.auth().onAuthStateChanged(user => {
+        //Verificar se a pessoa está logada
+        if(!user) return window.location = 'index.html'       
+            var ref = firebase.database().ref('/Imgs/');
+database.ref("/Imgs/").orderByChild('link').on("value", function(snapshot) {
+        const links = []
+        snapshot.forEach(function(data) { 
+            //Verificar se há algum gif com seu nome
+     if(data.val().UserName.includes(user.displayName)) {    
+        links.push(data.val().UserName)  
+        //Se tiver,criar um div para cada gif 
+        var div = document.createElement("div");
+        var para = document.createElement("p");
+        var node = document.createTextNode(`${data.val().imgName}`);
+        para.appendChild(node);
+        div.appendChild(para)
+        //div Style
+        div.style.width = "400px";
+        div.style.height = "400px";
+        div.style.background = `url(${data.val().link})`;
+        div.style.color = "white";
+        div.id = "tester";
+        div.style.alignContent = "center";
+        div.style.display = "inline-block"
+        div.style.marginLeft = "175px";
+        div.style.marginTop = "25px";
+        div.style.marginBottom = "25px";
+        //colocar a gif na gif main (list de divs)
+        document.getElementById("main").appendChild(div);
+        }
+        // Se o cara não fez nenhum upload de arquivos
+        if(links.length === 0) {
+            // Mudar testo com id log  para msg
+            document.getElementById("log").innerHTML = `I haven't upload a gif Yet`
+        }
+        console.log(links.length)
+    })
+});
+});
+});  
+</script>
+
+<!--Colocar o copyright-->
+<script>
+$(document).ready(function(){ 
+    var d = new Date();
+  var n = d.getFullYear();
+  document.getElementById("copy").innerHTML = `&copy; Copyright ${n} pixelgif.netlify.com `;
+});
+</script>
+
+<!--Styles dos textos-->
+<style>
+body {
+    background-repeat:repeat;
+    background-image: url("https://i.pinimg.com/originals/9b/b4/3a/9bb43ae0d7aa51bcc59d67b58f00dc4a.png");
+  }
+  
+p {
+    font-family: '8BITWONDERNominal';
+    font-size: 10px;
+    color: white;
+    text-align: center;
+}
+h1 {
+    color: white;
+    font-family: '8BITWONDERNominal';
+    font-size: 25px;
+    text-align: center;
+}
+#copy {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    font-size: 12px;
+    color: rgb(255, 255, 255);
+    text-align: center;   
+}
+
+#tester {
+    border: 1px solid rgb(0, 0, 0);
+    border-radius: 4px;
+  }
+  
+  #tester:hover {
+    border: 2px solid rgb(255, 255, 255);
+  }
+</style>
+
+
+
+

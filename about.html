@@ -1,0 +1,60 @@
+<html>
+  <head>
+      <link rel="icon" type="image/png" href="images/icons/favicon.png"/>
+      <title>About</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="author" content="colorlib.com">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,800" rel="stylesheet" />
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+    <script src='https://static.tumblr.com/maopbtg/oimmiw86r/jquery.autosize-min.js'></script>
+    <link href="assets/css/main.css" rel="stylesheet" />
+  </head>
+  <body>
+    
+    <div class="s007">
+      <form>
+        <fieldset>
+            <p align="center" id= "" style="width:100%; color:rgb(255, 255, 255); font-size:25px;">andomGif is a website created by Brunin.You can see Random Gifs and upload your own custom gif to the website. At first we don't have a currency system,but we want to add it later,with that you can put prices to your Gifs and users can buy it 
+            </p>
+            <p><a href="login.html">create an Account </a></p>
+            <p><a href="random.html">see random gifs </a></p>
+
+            <h1 align="center" style="width:100%; color:rgb(255, 255, 255);" id="Números"></h1>
+          <legend align="center">About</legend>
+          <div class="suggestion-wrap">
+        </fieldset>
+      </form>
+    </div>
+  </body>
+</html>
+
+<script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>
+<script src='http://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.min.js'></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyD0r1zfuSV1ZfP08YbZ-fOZY4lw3XLLboA",
+    authDomain: "discord-fdbba.firebaseapp.com",
+    databaseURL: "https://discord-fdbba.firebaseio.com",
+    projectId: "discord-fdbba",
+    storageBucket: "",
+    messagingSenderId: "757715077798"
+  };
+  firebase.initializeApp(config);
+  var database = firebase.database();
+  $(document).ready(function(){
+    setInterval(function(){
+      database.ref('Global/User/')
+.once('value').then(async function(data) {
+  var Num = document.getElementById('Números')
+  Num.innerHTML = `${data.numChildren()} registered people`
+
+});
+    });
+    }, 1000);
+
+</script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>

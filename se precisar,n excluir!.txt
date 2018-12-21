@@ -1,0 +1,41 @@
+<script>
+
+//Crirar o Storage
+fileButton.addEventListener('change',function(e) {
+  var file = e.target.files[0]
+  var storageRef = firebase.storage().ref('/Imgs/' + file.name)
+  var task = storageRef.put(file);
+  task.on('state_changed',
+  function progress(snapshot) {
+    var percent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+    document.getElementById("progress_one").style.width = percent + "%";
+    uploader.value = percent;
+  },
+  function error(err) {
+
+  },
+  //concesso
+  function complete() {
+    //verificar se está logado
+    firebase.auth().onAuthStateChanged(user => {
+      
+    if(!user) return;
+    task.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+      foto.setAttribute("src",downloadURL)
+    var database = firebase.database();
+    var fileName = file.name.replace(".", "")
+    database.ref(`imgs/${user.uid}/${fileName}`).set({
+    UserName: user.displayName,
+    link: downloadURL,
+    imgName: file.name,
+ 
+  });
+  console.log('File available at', downloadURL);
+    })     
+  });
+
+  }
+  );
+
+});
+</script>

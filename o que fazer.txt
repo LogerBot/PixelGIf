@@ -1,0 +1,4 @@
+1- após lançamento,trocar todos window.location para "upload.html" !
+2- criar um navbar
+3- currency system
+e mais dps...

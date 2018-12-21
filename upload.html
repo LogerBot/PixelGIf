@@ -1,0 +1,135 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <title>Upload</title>
+        <link rel="icon" type="image/png" href="images/icons/favicon.png"/>
+<!--===============================================================================================-->
+        <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+        <script src="https://cdn.firebase.com/libs/firebaseui/3.5.0/firebaseui.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>
+        <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+        <script src='https://static.tumblr.com/maopbtg/oimmiw86r/jquery.autosize-min.js'></script>
+        <script src='http://ajax.googleapis.com/ajax/libs/angularjs/1.3.2/angular.min.js'></script>
+        <script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>
+        <script src="https://cdn.firebase.com/libs/firebaseui/3.5.0/firebaseui.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/upload.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->        
+    </head>       
+    <body>
+      <!--Barra de progresso-->
+        <div class="bar_container">
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped" id="progress_one" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+         <!--Drag and drop-->
+        <form action="upload.php" method="POST" id="label">
+            <input type="file" multiple>    
+            <p id="drag">Drag your files here or click in this area.</p>       
+          </form>
+      </div>
+      <p id="copy"></p>
+    </body>
+</html>
+
+<script>
+  var uploader = document.getElementById("uploader")
+  var label = document.getElementById("label")
+  var foto = document.getElementById("foto")
+  var texto = document.getElementById("drag")
+          // Initialize Firebase
+          var config = {
+            apiKey: "AIzaSyBfNw37iyuwI3-W5Wn4H9P34n3f0rl5dzY",
+            authDomain: "login-476c9.firebaseapp.com",
+            databaseURL: "https://login-476c9.firebaseio.com",
+            projectId: "login-476c9",
+            storageBucket: "login-476c9.appspot.com",
+            messagingSenderId: "72881085156"
+          };
+          firebase.initializeApp(config);
+          var storage = firebase.storage();
+          var database = firebase.database();
+          firebase.auth().onAuthStateChanged(user => {
+    if(user) {
+      //document.getElementById("Name").innerHTML = user.displayName
+    } else {
+      //document.getElementById("Name").innerHTML = `Por favor,login !`
+      label.disabled = true;
+      drag.innerText = "Please,log in!"
+    }
+});        
+</script>
+
+<script>
+function sair() {
+    firebase.auth().signOut()
+  .then(function() {
+    window.location = 'login.html'
+  })
+  .catch(function(error) {
+    // An error happened
+  });
+}
+</script>
+<script>
+  $('form input').change(function (e) {
+    firebase.auth().onAuthStateChanged(user => {
+      if(!user) window.location = 'login.html'
+    if(user) {
+    var file = e.target.files[0]
+    var ref = firebase.database().ref('/Imgs/');
+    //Ver se não é gif
+    if(!file.name.includes("gif")) return  $('form p').text(`${file.name} is not a .gif!`);
+    /*/database.ref("/Imgs/").on("value", function(snapshot) { 
+      snapshot.forEach(function(data) { 
+        console.log(data.val())
+        if(data.val().imgName = file.name) return $('form p').text(`${file.name} is already in my system`);
+      });
+    });/*/
+    var storageRef = firebase.storage().ref('/Imgs/' + file.name)
+    var task = storageRef.put(file);
+    task.on('state_changed',
+     function progress(snapshot) {
+      var percent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+      document.getElementById("progress_one").style.width = percent + "%";
+      uploader.value = percent;
+  },
+  function error(err) {
+
+  },
+  //concesso
+  function complete() {
+    //verificar se está logado
+    firebase.auth().onAuthStateChanged(user => {
+     task.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+      window.open(`${downloadURL}`,'name','width=600,height=400')
+      //  foto.setAttribute("src",downloadURL)
+      var database = firebase.database();
+      var fileName = file.name.replace(".", "")
+      database.ref(`Imgs/${fileName}`).set({
+      UserName: user.displayName,
+      link: downloadURL,
+      imgName: file.name,
+      Email: user.email
+    });
+    console.log('File available at', downloadURL);
+    $('form p').text(`${file.name} was uploaded!`);
+      })     
+        });
+            }
+              );
+                }
+                  });
+                    });
+
+</script>
+
+<script>
+	$(document).ready(function(){ 
+    var d = new Date();
+  var n = d.getFullYear();
+  document.getElementById("copy").innerHTML = `&copy; Copyright ${n} pixelgif.netlify.com`;
+});
+</script>
